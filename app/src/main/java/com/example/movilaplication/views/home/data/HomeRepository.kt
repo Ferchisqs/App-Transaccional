@@ -1,6 +1,5 @@
 package com.example.movilaplication.views.home.data
 
-import com.example.movilaplication.core.network.ApiService
 import com.example.movilaplication.core.network.Disco
 import com.example.movilaplication.core.network.RetrofitInstance
 

@@ -21,7 +21,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
             try {
                 val response = RetrofitInstance.apiService.obtenerDiscos()
                 Log.d("RetrofitTest", "Respuesta: $response")
-                _discos.value = response // Asigna la respuesta a la lista de discos
+                _discos.value = response
             } catch (e: Exception) {
                 Log.e("RetrofitTest", "Error en la solicitud", e)
             }
@@ -43,6 +43,5 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
 
 
     fun logout() {
-        // Aquí puedes manejar el cierre de sesión si es necesario
     }
 }

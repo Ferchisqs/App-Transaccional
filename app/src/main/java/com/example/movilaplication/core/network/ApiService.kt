@@ -10,7 +10,13 @@ data class Disco(val nombre: String, val artista: String, val anio_lanzamiento: 
 data class RegisterRequest(val email: String, val password: String, val confirmPassword: String)
 data class RegisterResponse(val id: Int, val email: String)
 
+data class LoginRequest(val email: String, val password: String)
+data class LoginResponse(val token: String)
+
 interface ApiService {
+    @POST("login")
+    suspend fun loginUser(@Body request: LoginRequest): Response<LoginResponse>
+
     @GET("discos")
     suspend fun obtenerDiscos(): List<Disco>
 

@@ -15,10 +15,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.movilaplication.core.network.Disco
 
@@ -35,6 +37,8 @@ fun HomeScreen(
     var anioLanzamiento by remember { mutableStateOf(TextFieldValue("")) }
     var errorMensaje by remember { mutableStateOf<String?>(null) }
 
+    var mostrarModal by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         viewModel.obtenerDiscos()
     }
@@ -44,7 +48,7 @@ fun HomeScreen(
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(Color(0xFF6A0DAD), Color.Black)
+                    colors = listOf(Color(0xFF4C1C97), Color(0xFF1A1A1A))
                 )
             )
             .pointerInput(Unit) {
@@ -63,7 +67,8 @@ fun HomeScreen(
             Text(
                 text = "Bienvenido a la lista de música",
                 fontSize = 24.sp,
-                color = Color.White
+                color = Color.White,
+                style = TextStyle(fontSize = 24.sp, color = Color.White)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -74,87 +79,114 @@ fun HomeScreen(
                     onLogout()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text("Cerrar sesión", color = Color.Black)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(text = "Agregar disco", fontSize = 20.sp, color = Color.White)
+            Button(
+                onClick = {
+                    mostrarModal = true
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text("Agregar disco", color = Color.Black)
+            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            if (mostrarModal) {
+                Dialog(onDismissRequest = { mostrarModal = false }) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(Color.White, shape = MaterialTheme.shapes.medium)
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Agregar disco", fontSize = 20.sp)
 
-            Column {
-                OutlinedTextField(
-                    value = nombre,
-                    onValueChange = { nombre = it },
-                    label = { Text("Nombre del disco", color = Color.White) },
-                    textStyle = LocalTextStyle.current.copy(color = Color.White),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = nombre,
+                            onValueChange = { nombre = it },
+                            label = { Text("Nombre del disco") },
+                            textStyle = LocalTextStyle.current.copy(color = Color.Black),
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium
+                        )
 
-                OutlinedTextField(
-                    value = artista,
-                    onValueChange = { artista = it },
-                    label = { Text("Artista", color = Color.White) },
-                    textStyle = LocalTextStyle.current.copy(color = Color.White),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = artista,
+                            onValueChange = { artista = it },
+                            label = { Text("Artista") },
+                            textStyle = LocalTextStyle.current.copy(color = Color.Black),
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium
+                        )
 
-                OutlinedTextField(
-                    value = anioLanzamiento,
-                    onValueChange = { anioLanzamiento = it },
-                    label = { Text("Año de lanzamiento", color = Color.White) },
-                    textStyle = LocalTextStyle.current.copy(color = Color.White),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = anioLanzamiento,
+                            onValueChange = { anioLanzamiento = it },
+                            label = { Text("Año de lanzamiento") },
+                            textStyle = LocalTextStyle.current.copy(color = Color.Black),
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium
+                        )
 
-                errorMensaje?.let {
-                    Text(it, color = Color.Red)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    onClick = {
-                        val anio = anioLanzamiento.text.toIntOrNull()
-                        if (anio == null) {
-                            errorMensaje = "Año inválido. Debe ser un número."
-                            return@Button
+                        errorMensaje?.let {
+                            Text(it, color = Color.Red)
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
 
-                        if (nombre.text.isNotEmpty() && artista.text.isNotEmpty()) {
-                            val nuevoDisco = Disco(
-                                nombre = nombre.text,
-                                artista = artista.text,
-                                anio_lanzamiento = anio
-                            )
-                            viewModel.agregarDisco(nuevoDisco)
+                        Button(
+                            onClick = {
+                                val anio = anioLanzamiento.text.toIntOrNull()
+                                if (anio == null) {
+                                    errorMensaje = "Año inválido. Debe ser un número."
+                                    return@Button
+                                }
 
-                            nombre = TextFieldValue("")
-                            artista = TextFieldValue("")
-                            anioLanzamiento = TextFieldValue("")
-                            errorMensaje = null
-                        } else {
-                            errorMensaje = "Todos los campos son obligatorios."
+                                if (nombre.text.isNotEmpty() && artista.text.isNotEmpty()) {
+                                    val nuevoDisco = Disco(
+                                        nombre = nombre.text,
+                                        artista = artista.text,
+                                        anio_lanzamiento = anio
+                                    )
+                                    viewModel.agregarDisco(nuevoDisco)
+
+                                    nombre = TextFieldValue("")
+                                    artista = TextFieldValue("")
+                                    anioLanzamiento = TextFieldValue("")
+                                    errorMensaje = null
+                                    mostrarModal = false // Cerrar el modal
+                                } else {
+                                    errorMensaje = "Todos los campos son obligatorios."
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+                            Text("Agregar disco", color = Color.Black)
                         }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Agregar disco", color = Color.Black)
+                    }
                 }
             }
 
@@ -167,16 +199,20 @@ fun HomeScreen(
             LazyColumn {
                 items(discos.size) { index ->
                     val disco = discos[index]
-                    Column(
+                    Card(
                         modifier = Modifier
                             .padding(8.dp)
-                            .fillMaxWidth()
-                            .background(Color.White)
-                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
                     ) {
-                        Text("Nombre: ${disco.nombre}")
-                        Text("Artista: ${disco.artista}")
-                        Text("Año de lanzamiento: ${disco.anio_lanzamiento}")
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                        ) {
+                            Text("Nombre: ${disco.nombre}", style = TextStyle(fontSize = 16.sp, color = Color.Black))
+                            Text("Artista: ${disco.artista}", style = TextStyle(fontSize = 14.sp, color = Color.Gray))
+                            Text("Año de lanzamiento: ${disco.anio_lanzamiento}", style = TextStyle(fontSize = 14.sp, color = Color.Gray))
+                        }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }

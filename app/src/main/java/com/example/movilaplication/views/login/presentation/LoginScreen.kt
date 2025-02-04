@@ -29,12 +29,20 @@ import com.example.movilaplication.R
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    viewModel: LoginViewModel
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val loginState by viewModel.loginState.collectAsState()
+
+    LaunchedEffect(loginState) {
+        if (loginState is LoginState.Success) {
+            onLoginSuccess()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -51,7 +59,6 @@ fun LoginScreen(
         ) {
             Text(text = "Iniciar Sesión", fontSize = 24.sp, color = Color.White)
 
-
             Spacer(modifier = Modifier.height(8.dp))
             Image(
                 painter = painterResource(id = R.drawable.animalito),
@@ -67,7 +74,7 @@ fun LoginScreen(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("Correo electrónico", color = Color.White) },
-                textStyle = LocalTextStyle.current.copy(color = Color.White), // Texto blanco
+                textStyle = LocalTextStyle.current.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "Email", tint = Color.White) },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
@@ -77,7 +84,7 @@ fun LoginScreen(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Contraseña", color = Color.White) },
-                textStyle = LocalTextStyle.current.copy(color = Color.White), // Texto blanco
+                textStyle = LocalTextStyle.current.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Filled.Visibility, contentDescription = "Contraseña", tint = Color.White) },
                 trailingIcon = {
@@ -97,7 +104,11 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { onLoginSuccess() },
+                onClick = {
+                    viewModel.email = email
+                    viewModel.password = password
+                    viewModel.login()
+                },
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -109,6 +120,19 @@ fun LoginScreen(
             TextButton(onClick = onNavigateToRegister) {
                 Text("¿No tienes cuenta? Regístrate aquí", color = Color.White)
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            when (loginState) {
+                is LoginState.Error -> {
+                    Text("Error: ${(loginState as LoginState.Error).message}", color = Color.Red)
+                }
+                is LoginState.Loading -> {
+                    CircularProgressIndicator(color = Color.White)
+                }
+                else -> {}
+            }
         }
     }
 }
+

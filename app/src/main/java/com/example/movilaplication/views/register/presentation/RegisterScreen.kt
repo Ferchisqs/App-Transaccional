@@ -52,9 +52,6 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
-
-
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -69,7 +66,7 @@ fun RegisterScreen(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Contraseña", color = Color.White) },
-                textStyle = LocalTextStyle.current.copy(color = Color.White), // Texto blanco
+                textStyle = LocalTextStyle.current.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Filled.Visibility, contentDescription = "Contraseña", tint = Color.White) },
                 trailingIcon = {
@@ -90,7 +87,7 @@ fun RegisterScreen(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
                 label = { Text("Confirmar Contraseña", color = Color.White) },
-                textStyle = LocalTextStyle.current.copy(color = Color.White), // Texto blanco
+                textStyle = LocalTextStyle.current.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Filled.Visibility, contentDescription = "Confirmar Contraseña", tint = Color.White) },
                 trailingIcon = {
@@ -111,13 +108,14 @@ fun RegisterScreen(
 
             Button(
                 onClick = {
-                    // Comprobar que las contraseñas coinciden antes de hacer el registro
                     if (password == confirmPassword) {
                         viewModel.register(email, password, confirmPassword) { success ->
                             if (success) {
                                 onRegisterSuccess()
+                            } else {
                             }
                         }
+                    } else {
                     }
                 },
                 shape = RoundedCornerShape(8.dp),
